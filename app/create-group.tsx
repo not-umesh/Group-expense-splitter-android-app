@@ -77,7 +77,7 @@ export default function CreateGroupScreen() {
         setMembers(members.filter((_, i) => i !== index));
     };
 
-    const handleCreate = () => {
+    const handleCreate = async () => {
         // Rate limit check — prevents spam tapping
         const rateCheck = rateLimitCreate('group');
         if (!rateCheck.allowed) {
@@ -97,7 +97,7 @@ export default function CreateGroupScreen() {
             return;
         }
 
-        const groupId = addGroup(sanitizeString(name), category, members);
+        const groupId = await addGroup(sanitizeString(name), category, members);
         if (!groupId) {
             Alert.alert('Error', 'Could not create group. You may have reached the limit.');
             return;

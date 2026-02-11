@@ -39,8 +39,8 @@ export default function SettleScreen() {
                 { text: 'Cancel', style: 'cancel' },
                 {
                     text: 'Confirm',
-                    onPress: () => {
-                        addSettlement(id, fromId, toId, amount);
+                    onPress: async () => {
+                        await addSettlement(id, fromId, toId, amount);
                         router.back();
                     },
                 },

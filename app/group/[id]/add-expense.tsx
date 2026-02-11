@@ -52,7 +52,7 @@ export default function AddExpenseScreen() {
         }
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
         // Rate limit — prevents spam tapping
         const rateCheck = rateLimitCreate('expense');
         if (!rateCheck.allowed) {
@@ -104,7 +104,7 @@ export default function AddExpenseScreen() {
             }
         }
 
-        const success = addExpense({
+        const success = await addExpense({
             groupId: id,
             description: sanitizeString(description),
             amount: amountNum,

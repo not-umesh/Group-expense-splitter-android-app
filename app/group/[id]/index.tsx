@@ -48,8 +48,8 @@ export default function GroupDetailScreen() {
             {
                 text: 'Delete',
                 style: 'destructive',
-                onPress: () => {
-                    deleteGroup(id);
+                onPress: async () => {
+                    await deleteGroup(id);
                     router.back();
                 },
             },

@@ -1,5 +1,15 @@
+/**
+ * Types — App data structures.
+ *
+ * IDs are UUIDs from Supabase. CamelCase is used in the app layer;
+ * the store handles snake_case ↔ camelCase mapping at the Supabase boundary.
+ *
+ * </UV>
+ */
+
 export interface Group {
     id: string;
+    userId?: string;
     name: string;
     category: 'trip' | 'roommates' | 'dinner' | 'party' | 'shopping' | 'office' | 'custom';
     createdAt: string;
@@ -8,8 +18,10 @@ export interface Group {
 
 export interface Member {
     id: string;
+    groupId?: string;
     name: string;
     color: string;
+    sortOrder?: number;
 }
 
 export interface Expense {

@@ -12,12 +12,31 @@ import {
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Colors, Spacing, FontSize, BorderRadius, Shadows } from '../../constants/theme';
 import { useStore } from '../../store/useStore';
+import { useAuth } from '../../contexts/AuthContext';
 import { rateLimitDelete, getThrottleMessage } from '../../utils/rateLimiter';
 
 const CURRENCIES = ['₹', '$', '€', '£', '¥', '₩'];
 
 export default function SettingsScreen() {
     const { currency, setCurrency, groups, expenses, settlements, clearAll } = useStore();
+    const { user, profile, signOut } = useAuth();
+
+    const handleSignOut = () => {
+        Alert.alert(
+            'Sign Out',
+            'Are you sure you want to sign out?',
+            [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                    text: 'Sign Out',
+                    style: 'destructive',
+                    onPress: async () => {
+                        await signOut();
+                    },
+                },
+            ]
+        );
+    };
 
     const handleClearData = () => {
         // Rate limit destructive operations
@@ -35,8 +54,8 @@ export default function SettingsScreen() {
                 {
                     text: 'Clear All',
                     style: 'destructive',
-                    onPress: () => {
-                        clearAll();
+                    onPress: async () => {
+                        await clearAll();
                         Alert.alert('Done', 'All data has been cleared.');
                     },
                 },
@@ -47,6 +66,22 @@ export default function SettingsScreen() {
     return (
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
             <StatusBar barStyle="dark-content" />
+
+            {/* Account */}
+            <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Account</Text>
+                <View style={styles.accountCard}>
+                    <View style={styles.avatarCircle}>
+                        <MaterialCommunityIcons name="account" size={28} color="#FFF" />
+                    </View>
+                    <View style={styles.accountInfo}>
+                        <Text style={styles.accountName}>
+                            {profile?.display_name || 'User'}
+                        </Text>
+                        <Text style={styles.accountEmail}>{user?.email || ''}</Text>
+                    </View>
+                </View>
+            </View>
 
             {/* Currency */}
             <View style={styles.section}>
@@ -104,6 +139,10 @@ export default function SettingsScreen() {
                     <MaterialCommunityIcons name="delete-forever" size={20} color={Colors.light.error} />
                     <Text style={styles.dangerText}>Clear All Data</Text>
                 </TouchableOpacity>
+                <TouchableOpacity style={[styles.dangerButton, { marginTop: Spacing.sm }]} onPress={handleSignOut}>
+                    <MaterialCommunityIcons name="logout" size={20} color={Colors.light.error} />
+                    <Text style={styles.dangerText}>Sign Out</Text>
+                </TouchableOpacity>
             </View>
 
             <View style={{ height: 40 }} />
@@ -125,6 +164,36 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colors.light.background,
+    },
+    accountCard: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: Colors.light.surface,
+        borderRadius: BorderRadius.lg,
+        padding: Spacing.lg,
+        ...Shadows.sm,
+    },
+    avatarCircle: {
+        width: 48,
+        height: 48,
+        borderRadius: 24,
+        backgroundColor: Colors.light.primary,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    accountInfo: {
+        flex: 1,
+        marginLeft: Spacing.md,
+    },
+    accountName: {
+        fontSize: FontSize.md,
+        fontWeight: '700',
+        color: Colors.light.text,
+    },
+    accountEmail: {
+        fontSize: FontSize.xs,
+        color: Colors.light.textSecondary,
+        marginTop: 2,
     },
     section: {
         paddingHorizontal: Spacing.lg,
